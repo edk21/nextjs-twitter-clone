@@ -1,8 +1,10 @@
 import { SparklesIcon } from '@heroicons/react/outline'
-import React from 'react'
+import { posts } from './dummydata'
 import FeedInput from './FeedInput'
+import Post from './Post'
 
 const Feed = () => {
+    
   return (
     <div className='xl:ml-[370px] border-r border-l border-gray-200 xl:min-w-[576px] sm:ml-[73px] flex-grow max-w-xl'>
         <div className='flex items-center py-2 px-3 sticky top-0 z-50 bg-white border-b border-gray-200'>
@@ -12,6 +14,11 @@ const Feed = () => {
             </div>
         </div>
         <FeedInput />
+        {
+            posts.map(post => (
+                <Post key={post.id} post={post}/>
+            ))
+        }
     </div>
   )
 }

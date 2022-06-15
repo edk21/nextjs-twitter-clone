@@ -3,7 +3,8 @@ module.exports = {
   images: {
     domains: [
       "upload.wikimedia.org",
-      "www.citypng.com"
+      "www.citypng.com",
+      "images.unsplash.com",
     ]
   }
 }
