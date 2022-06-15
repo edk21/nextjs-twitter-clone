@@ -8,11 +8,11 @@ const Sidebar = () => {
     return (
         <div className='hidden sm:flex flex-col p-2 xl:items-start fixed h-full'>
             {/* <twitter logo> */}
-            <div className="hover__effect p-0 hover:bg-blue-100 xl:px-1">
+            <div className="hover__effect p-0 hover:bg-blue-100 xl:p-1 flex items-center justify-center">
                 <Image 
                     src="https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/1200px-Twitter_Bird.svg.png" 
-                    height="30" 
-                    width="30" 
+                    height="40" 
+                    width="40" 
                     alt="twitter logo">
                 </Image>
             </div>
