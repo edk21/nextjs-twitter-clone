@@ -6,13 +6,13 @@ import { DotsHorizontalIcon } from '@heroicons/react/outline'
 
 const Sidebar = () => {
     return (
-        <div className='hidden sm:flex flex-col p-2 xl:items-start fixed h-full'>
+        <div className='hidden sm:flex flex-col p-2 xl:items-start fixed h-full xl:ml-24'>
             {/* <twitter logo> */}
             <div className="hover__effect p-0 hover:bg-blue-100 xl:p-1 flex items-center justify-center">
                 <Image 
                     src="https://upload.wikimedia.org/wikipedia/fr/thumb/c/c8/Twitter_Bird.svg/1200px-Twitter_Bird.svg.png" 
-                    height="40" 
-                    width="40" 
+                    height="50" 
+                    width="50" 
                     alt="twitter logo">
                 </Image>
             </div>
