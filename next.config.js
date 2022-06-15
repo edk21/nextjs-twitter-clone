@@ -5,6 +5,7 @@ module.exports = {
       "upload.wikimedia.org",
       "www.citypng.com",
       "images.unsplash.com",
+      "lh3.googleusercontent.com",
     ]
   }
 }
