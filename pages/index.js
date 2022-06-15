@@ -3,7 +3,7 @@ import Feed from '../components/Feed'
 import Sidebar from '../components/Sidebar'
 import Widgets from '../components/Widgets'
 
-export default function Home({ newsData }) {
+export default function Home({ newsData, whoToFollowData }) {
   return (
     <div>
       <Head>
@@ -19,7 +19,7 @@ export default function Home({ newsData }) {
         <Feed />
 
         {/* <Widgets> */}
-        <Widgets newsData={newsData} />
+        <Widgets newsData={newsData} whoToFollowData={whoToFollowData} />
 
         {/* <Modal> */}
 
@@ -36,9 +36,14 @@ export default function Home({ newsData }) {
 export async function getServerSideProps() {
   const newsRes = await fetch('https://saurav.tech/NewsAPI/top-headlines/category/technology/fr.json')
   const newsData = await newsRes.json()
+
+  const whoToFollowRes = await fetch('https://randomuser.me/api/?results=30&inc=name,picture,login');
+  const whoToFollowData = await whoToFollowRes.json();
+
   return {
     props: {
-      newsData
+      newsData,
+      whoToFollowData
     }
   }
 }

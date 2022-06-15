@@ -5,7 +5,7 @@ import React from 'react'
 const Post = (props) => {
     const { id, name, username, userImg, img, text, timeStamp } = props.post
   return (
-    <div className='flex p-3 cursor-pointer border-b border-gray-200'>
+    <div className='flex grow p-3 cursor-pointer border-b border-gray-200'>
         {/*user profile image*/}
         <div className="mr-4">
             <Image className='h-11 w-11 rounded-full' src={userImg} alt={name} width={30} height={30}></Image>
