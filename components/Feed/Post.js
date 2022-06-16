@@ -27,12 +27,10 @@ const Post = (props) => {
         }
     }
     const deleteATweet = async () => {
-        if(session){
-            if(window.confirm("Are you sure you want to delete this tweet?")){
-                await deleteDoc(doc(db, "tweets", props.post.id))
-                if(image){
-                    deleteObject(ref(storage, `tweets/${props.post.id}/image`))
-                }
+        if(window.confirm("Are you sure you want to delete this tweet?")){
+            await deleteDoc(doc(db, "tweets", props.post.id))
+            if(image){
+                deleteObject(ref(storage, `tweets/${props.post.id}/image`))
             }
         }
     }
