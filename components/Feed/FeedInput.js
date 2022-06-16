@@ -80,7 +80,7 @@ const FeedInput = () => {
                 </div>
                 {
                     tweetImage && ( <div className="relative">
-                        <XIcon className='h-7 text-black shadow-lg shadow-white rounded-full cursor-pointer absolute' onClick={()=>setTweetImage(null)} />
+                        <XIcon className='h-7 border text-black shadow-lg rounded-full m-1 cursor-pointer absolute' onClick={()=>setTweetImage(null)} />
                         <img src={tweetImage} alt="tweet-image" className={`${loading && "animate-pulse"}`} />
                     </div>)
                 }
