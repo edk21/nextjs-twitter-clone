@@ -6,11 +6,15 @@ import Moment from 'react-moment'
 import { db, storage } from '../../firebase'
 import { useSession, signIn } from "next-auth/react"
 import { deleteObject, ref } from 'firebase/storage'
+import {useRecoilState} from 'recoil'
+import {modalState, postIdState} from '../../atom/modalAtom'
 
 const Post = (props) => {
     const { data: session } = useSession();
     const { id, name, username, userImg, image, text, timestamp } = props.post.data()
     const [likes, setLikes] = useState([])
+    const [modal, setModal] = useRecoilState(modalState)
+    const [postId, setPostId] = useRecoilState(postIdState)
     const [hasLiked, setHasLiked] = useState(false)
   
     const likeATweet = async () => {
@@ -34,6 +38,7 @@ const Post = (props) => {
             }
         }
     }
+
 
     useEffect(() => {
         const unsubscribe = onSnapshot(
@@ -82,7 +87,17 @@ const Post = (props) => {
 
             {/*icons*/}
             <div className="flex items-center justify-between text-gray-500 p-2">
-                <ChatIcon className='h-9 w-9 p-2 cursor-pointer hover__effect hover:text-sky-500 hover:bg-sky-100' />
+
+                <ChatIcon className='h-9 w-9 p-2 cursor-pointer hover__effect hover:text-sky-500 hover:bg-sky-100' onClick={()=> {
+                    if(!session){
+                        signIn();
+                    }else{
+                        setPostId(props.post.id)
+                        setModal(!modal)
+                    }
+                    
+                }}
+                 />
                 {
                     session?.user.uid === id && (
                     <TrashIcon className="h-9 w-9 p-2 cursor-pointer hover__effect hover:text-red-600 hover:bg-red-100" onClick={()=> deleteATweet()}/>)
