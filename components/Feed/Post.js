@@ -3,8 +3,9 @@ import { HeartIcon as HeartIconSolid, SortAscendingIcon } from '@heroicons/react
 import { collection, deleteDoc, doc, onSnapshot, setDoc } from 'firebase/firestore'
 import React,{useState, useEffect} from 'react'
 import Moment from 'react-moment'
-import { db } from '../../firebase'
+import { db, storage } from '../../firebase'
 import { useSession, signIn } from "next-auth/react"
+import { deleteObject, ref } from 'firebase/storage'
 
 const Post = (props) => {
     const { data: session } = useSession();
@@ -24,10 +25,17 @@ const Post = (props) => {
         }else{
             signIn();
         }
-        
-        
     }
-    const deleteATweet = async () => {}
+    const deleteATweet = async () => {
+        if(session){
+            if(window.confirm("Are you sure you want to delete this tweet?")){
+                await deleteDoc(doc(db, "tweets", props.post.id))
+                if(image){
+                    deleteObject(ref(storage, `tweets/${props.post.id}/image`))
+                }
+            }
+        }
+    }
 
     useEffect(() => {
         const unsubscribe = onSnapshot(
@@ -68,13 +76,20 @@ const Post = (props) => {
 
             {/*post image*/}
             <div className="">
-                <img className='rounded-2xl mr-2 object-cover' src={image} alt={name} width={700} height={400}/>
+                {
+                    image && <img className='rounded-2xl mr-2 object-cover' src={image} alt={name} width={700} height={400}/>
+                }
+                
             </div>
 
             {/*icons*/}
             <div className="flex items-center justify-between text-gray-500 p-2">
                 <ChatIcon className='h-9 w-9 p-2 cursor-pointer hover__effect hover:text-sky-500 hover:bg-sky-100' />
-                <TrashIcon className="h-9 w-9 p-2 cursor-pointer hover__effect hover:text-red-600 hover:bg-red-100" onClick={()=> deleteATweet()}/>
+                {
+                    session?.user.uid === id && (
+                    <TrashIcon className="h-9 w-9 p-2 cursor-pointer hover__effect hover:text-red-600 hover:bg-red-100" onClick={()=> deleteATweet()}/>)
+                }
+                
                 <div className=" flex items-center">
                 {
                     hasLiked ? 
