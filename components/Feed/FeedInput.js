@@ -12,6 +12,8 @@ const FeedInput = () => {
     const [loading, setLoading] = useState(false)
 
     const {data: session} = useSession();
+
+    //console.log(session?.user)
     const filePickerRef = useRef(null)
 
     const sendTweet = async () => {

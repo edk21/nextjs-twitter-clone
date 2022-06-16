@@ -16,7 +16,7 @@ const Feed = () => {
         
         return unscubscribe;
     }, [])
-    console.log(posts)
+    //console.log(posts)
     
   return (
     <div className='xl:ml-[370px] border-r border-l border-gray-200 xl:min-w-[576px] sm:ml-[73px] grow '>
