@@ -15,11 +15,13 @@ export default NextAuth({
         signIn: "/auth/signin",
     },
 
+    secret: process.env.SECRET,
+
     callbacks: {
         async session ({ session, token }) {
             session.user.username = session.user.name.split("").join("").toLocaleLowerCase();
             session.user.uid = token.sub;
             return session;
         }
-    }
+    },
 })

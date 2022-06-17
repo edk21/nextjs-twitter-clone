@@ -9,6 +9,7 @@ import Post from '../../components/Feed/Post'
 import { db } from '../../firebase'
 import { collection, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
 import Comments from '../../components/Comments'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const PostPage = ({ newsData, whoToFollowData }) => {
     const router = useRouter();
@@ -51,15 +52,26 @@ const PostPage = ({ newsData, whoToFollowData }) => {
                         {
                             comment.length > 0 && (
                                 <div className="">
+                                    <AnimatePresence>
                                     {
                                        comment.map(comment => (
+                                           <motion.div
+                                               key={comment.id}
+                                               initial={{ opacity: 0 }}
+                                               animate={{ opacity: 1 }}
+                                               exit={{ opacity: 0 }}
+                                               transition={{ duration: 1 }}
+                                           >
                                             <Comments 
                                                 key={comment.id} 
                                                 commentId={comment.id} 
                                                 originalPostId={id}
-                                                comment={comment.data()} />
+                                                comment={comment.data()}
+                                            />
+                                            </motion.div>
                                         )) 
                                     }
+                                  </AnimatePresence>
                                 </div>
                             )
                         }
