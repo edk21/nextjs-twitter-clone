@@ -30,7 +30,7 @@ const CommentModal = () => {
         setModal(false);
         setComment("");
 
-        router.push(`tweets/${postId}`)
+        router.push(`/posts/${postId}`)
     }
 
     useEffect(() => {

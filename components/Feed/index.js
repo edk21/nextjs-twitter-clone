@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 
 const Feed = () => {
     const [posts, setPosts] = useState([])
+    //console.log("posts: ", posts)
 
     useEffect(() => {
         const unscubscribe = onSnapshot(query(collection(db, "tweets"), orderBy("timestamp", "desc")), (snapshot)=> {
@@ -38,7 +39,7 @@ const Feed = () => {
                         exit={{opacity: 0}}
                         transition={{duration: 1}}
                     >
-                        <Post post={post}/>
+                        <Post post={post} id={post.id}/>
                     </motion.div>
                 ))
             }

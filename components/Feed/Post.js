@@ -8,10 +8,12 @@ import { useSession, signIn } from "next-auth/react"
 import { deleteObject, ref } from 'firebase/storage'
 import {useRecoilState} from 'recoil'
 import {modalState, postIdState} from '../../atom/modalAtom'
+import { useRouter } from 'next/router'
 
-const Post = (props) => {
+const Post = ({id, post}) => {
     const { data: session } = useSession();
-    const { id, name, username, userImg, image, text, timestamp } = props.post.data()
+    const router = useRouter();
+    
     const [likes, setLikes] = useState([])
     const [comments, setComments] = useState([])
     const [modal, setModal] = useRecoilState(modalState)
@@ -21,9 +23,9 @@ const Post = (props) => {
     const likeATweet = async () => {
         if(session){
             if(hasLiked){
-                await deleteDoc(doc(db, "tweets", props.post.id, "likes", session?.user.uid))
+                await deleteDoc(doc(db, "tweets", id, "likes", session?.user.uid))
             }else{
-                await setDoc(doc(db, "tweets", props.post.id, "likes", session?.user.uid), {
+                await setDoc(doc(db, "tweets", id, "likes", session?.user.uid), {
                     username: session.user.username,
                 })
             }
@@ -33,23 +35,25 @@ const Post = (props) => {
     }
     const deleteATweet = async () => {
         if(window.confirm("Are you sure you want to delete this tweet?")){
-            await deleteDoc(doc(db, "tweets", props.post.id))
+            await deleteDoc(doc(db, "tweets", id))
             if(image){
-                deleteObject(ref(storage, `tweets/${props.post.id}/image`))
+                deleteObject(ref(storage, `tweets/${id}/image`))
             }
+            router.push("/");
         }
     }
 
 
     useEffect(() => {
         const unsubscribe = onSnapshot(
-            collection(db, "tweets", props.post.id, "likes"), (snapshot) => setLikes(snapshot.docs)
+            collection(db, "tweets", id, "likes"), (snapshot) => setLikes(snapshot.docs)
         );
         return () => unsubscribe();
     },[db])
+
     useEffect(() => {
         const unsubscribe = onSnapshot(
-            collection(db, "tweets", props.post.id, "comments"), (snapshot) => setComments(snapshot.docs)
+            collection(db, "tweets", id, "comments"), (snapshot) => setComments(snapshot.docs)
         );
         return () => unsubscribe();
     },[db])
@@ -63,7 +67,7 @@ const Post = (props) => {
     <div className='flex grow p-3 cursor-pointer border-b border-gray-200 flex-1'>
         {/*user profile image*/}
         <div className="mr-4">
-            <img className='h-11 w-11 rounded-full' src={userImg} alt={name} width={30} height={30}/>
+            <img className='h-11 w-11 rounded-full' src={post?.data()?.userImg} alt={post?.data()?.name} width={30} height={30}/>
         </div>
         
         <div className="flex-1 w-full">
@@ -71,10 +75,10 @@ const Post = (props) => {
             <div className="flex items-center justify-between">
                 {/*user info*/}
                 <div className="flex items-center space-x-1 white-nowrap">
-                    <h4 className='font-bold text-[15px] sm:text-[16px] hover:underline'>{name}</h4>
-                    <span className='text-sm sm:text-[15px]'>@{username}</span>
+                    <h4 className='font-bold text-[15px] sm:text-[16px] hover:underline'>{post?.data()?.name}</h4>
+                    <span className='text-sm sm:text-[15px]'>@{post?.data()?.username}</span>
                     <span className='text-sm sm:text-[15px] hover:underline'>
-                        <Moment fromNow>{timestamp?.toDate()}</Moment>
+                        <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
                     </span>
                 </div>
                 
@@ -82,12 +86,12 @@ const Post = (props) => {
             </div>
 
             {/*post text*/}
-            <p className='text-gray-800 text-[15px] sm:text-[16px] mb-2'>{text}</p>
+            <p className='text-gray-800 text-[15px] sm:text-[16px] mb-2'>{post?.data()?.text}</p>
 
             {/*post image*/}
             <div className="">
                 {
-                    image && <img className='rounded-2xl mr-2 object-cover' src={image} alt={name} width={700} height={400}/>
+                    post?.data().image && <img className='rounded-2xl mr-2 object-cover' src={post?.data()?.image} alt={post?.data()?.name} width={700} height={400}/>
                 }
                 
             </div>
@@ -99,7 +103,7 @@ const Post = (props) => {
                         if(!session){
                             signIn();
                         }else{
-                            setPostId(props.post.id)
+                            setPostId(id)
                             setModal(!modal)
                         }
                         
@@ -110,7 +114,7 @@ const Post = (props) => {
                     }
                  </div>
                 {
-                    session?.user.uid === id && (
+                    session?.user.uid === post?.data()?.id && (
                     <TrashIcon className="h-9 w-9 p-2 cursor-pointer hover__effect hover:text-red-600 hover:bg-red-100" onClick={()=> deleteATweet()}/>)
                 }
                 
