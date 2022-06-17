@@ -9,6 +9,7 @@ import { deleteObject, ref } from 'firebase/storage'
 import {useRecoilState} from 'recoil'
 import {modalState, postIdState} from '../../atom/modalAtom'
 import { useRouter } from 'next/router'
+import Loader from '../Loader'
 
 const Post = ({id, post}) => {
     const { data: session } = useSession();
@@ -62,12 +63,14 @@ const Post = ({id, post}) => {
         setHasLiked(likes.findIndex(like => like.id === session?.user.uid) !== -1)
     },[likes])
 
-
+    if(!post){
+        return <Loader />
+    }
     return (
     <div className='flex grow p-3 cursor-pointer border-b border-gray-200 flex-1'>
         {/*user profile image*/}
         <div className="mr-4">
-            <img className='h-11 w-11 rounded-full' src={post?.data()?.userImg} alt={post?.data()?.name} width={30} height={30}/>
+            <img className='h-11 w-11 rounded-full' src={post.data()?.userImg} alt={post?.data()?.name} width={30} height={30}/>
         </div>
         
         <div className="flex-1 w-full">
@@ -75,10 +78,10 @@ const Post = ({id, post}) => {
             <div className="flex items-center justify-between">
                 {/*user info*/}
                 <div className="flex items-center space-x-1 white-nowrap">
-                    <h4 className='font-bold text-[15px] sm:text-[16px] hover:underline'>{post?.data()?.name}</h4>
+                    <h4 className='font-bold text-[15px] sm:text-[16px] hover:underline'>{post.data()?.name}</h4>
                     <span className='text-sm sm:text-[15px]'>@{post?.data()?.username}</span>
                     <span className='text-sm sm:text-[15px] hover:underline'>
-                        <Moment fromNow>{post?.data()?.timestamp?.toDate()}</Moment>
+                        <Moment fromNow>{post.data()?.timestamp?.toDate()}</Moment>
                     </span>
                 </div>
                 
@@ -86,12 +89,12 @@ const Post = ({id, post}) => {
             </div>
 
             {/*post text*/}
-            <p className='text-gray-800 text-[15px] sm:text-[16px] mb-2'>{post?.data()?.text}</p>
+            <p className='text-gray-800 text-[15px] sm:text-[16px] mb-2' onClick={()=> router.push(`/posts/${id}`)}>{post.data()?.text}</p>
 
             {/*post image*/}
             <div className="">
                 {
-                    post?.data().image && <img className='rounded-2xl mr-2 object-cover' src={post?.data()?.image} alt={post?.data()?.name} width={700} height={400}/>
+                    post?.data().image && <img className='rounded-2xl mr-2 object-cover' src={post.data()?.image} alt={post.data()?.name} width={700} height={400} onClick={() => router.push(`/posts/${id}`)} />
                 }
                 
             </div>

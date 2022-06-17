@@ -7,15 +7,23 @@ import CommentModal from '../../components/CommentModal'
 import { ArrowLeftIcon } from '@heroicons/react/solid'
 import Post from '../../components/Feed/Post'
 import { db } from '../../firebase'
-import { doc, onSnapshot } from 'firebase/firestore'
+import { collection, doc, onSnapshot, orderBy, query } from 'firebase/firestore'
+import Comments from '../../components/Comments'
 
 const PostPage = ({ newsData, whoToFollowData }) => {
     const router = useRouter();
     const { id } = router.query;
     const [post, setPost] = useState(null);
+    const [comment, setComment] = useState([]);
 
+    // get the post data
     useEffect(()=> {
         onSnapshot(doc(db, "tweets", id), (snapshot) => setPost(snapshot))
+    },[db, id])
+
+    //get the post comments
+    useEffect(()=> {
+        onSnapshot(query(collection(db, "tweets", id, "comments"), orderBy("timestamp", "desc")), (snapshot)=> setComment(snapshot.docs))
     },[db, id])
 
   return (
@@ -37,15 +45,26 @@ const PostPage = ({ newsData, whoToFollowData }) => {
                             <ArrowLeftIcon className="h-5 hover:translate-x-[-5px] duration-500 ease-out" />
                         </div>
                           <h2 className='text-lg sm:text-xl font-bold cursor-pointer'>Post</h2>
-                          
-                          {/* {
-                            posts.map(post => (  
-                                <Post post={post} />
-                              ))
-                          } */}
-
                         </div>
+
                         <Post id={id} post={post} />
+                        {
+                            comment.length > 0 && (
+                                <div className="">
+                                    {
+                                       comment.map(comment => (
+                                            <Comments 
+                                                key={comment.id} 
+                                                commentId={comment.id} 
+                                                originalPostId={id}
+                                                comment={comment.data()} />
+                                        )) 
+                                    }
+                                </div>
+                            )
+                        }
+                        
+                        
                   </div>
                   
 
