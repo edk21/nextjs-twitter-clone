@@ -1,28 +1,44 @@
 import React,{ useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 import { useRecoilState } from 'recoil'
 import { modalState, postIdState } from '../../atom/modalAtom'
 import Modal from "react-modal"
 import { XIcon } from '@heroicons/react/solid'
 import { db } from '../../firebase'
-import { doc, onSnapshot } from 'firebase/firestore'
+import { addDoc, collection, doc, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import Moment from 'react-moment'
 import { useSession } from "next-auth/react"
 import { EmojiHappyIcon, PhotographIcon } from '@heroicons/react/outline'
 
 const CommentModal = () => {
+    const router = useRouter();
     const {data: session} = useSession();
     const [postId] = useRecoilState(postIdState)
     const [modal, setModal] = useRecoilState(modalState)
     const [comment, setComment] = useState("")
     const [post, setPost] = useState({})
 
-    const sendComment = async () => {}
+    const sendComment = async () => {
+        await addDoc(collection(db, "tweets", postId, "comments"), {
+            comment: comment,
+            name: session?.user?.name,
+            username: session?.user?.username,
+            userImg: session?.user?.image,
+            timestamp: serverTimestamp(),
+        })
+
+        setModal(false);
+        setComment("");
+
+        router.push(`tweets/${postId}`)
+    }
 
     useEffect(() => {
         onSnapshot(doc(db, "tweets", postId), (snapshot)=> {
             setPost(snapshot)
         })
     },[postId, db])
+
   return (
     <div>
         {modal && (

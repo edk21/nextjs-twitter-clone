@@ -13,6 +13,7 @@ const Post = (props) => {
     const { data: session } = useSession();
     const { id, name, username, userImg, image, text, timestamp } = props.post.data()
     const [likes, setLikes] = useState([])
+    const [comments, setComments] = useState([])
     const [modal, setModal] = useRecoilState(modalState)
     const [postId, setPostId] = useRecoilState(postIdState)
     const [hasLiked, setHasLiked] = useState(false)
@@ -46,6 +47,12 @@ const Post = (props) => {
         );
         return () => unsubscribe();
     },[db])
+    useEffect(() => {
+        const unsubscribe = onSnapshot(
+            collection(db, "tweets", props.post.id, "comments"), (snapshot) => setComments(snapshot.docs)
+        );
+        return () => unsubscribe();
+    },[db])
 
     useEffect(()=> {
         setHasLiked(likes.findIndex(like => like.id === session?.user.uid) !== -1)
@@ -53,13 +60,13 @@ const Post = (props) => {
 
 
     return (
-    <div className='flex grow p-3 cursor-pointer border-b border-gray-200'>
+    <div className='flex grow p-3 cursor-pointer border-b border-gray-200 flex-1'>
         {/*user profile image*/}
         <div className="mr-4">
             <img className='h-11 w-11 rounded-full' src={userImg} alt={name} width={30} height={30}/>
         </div>
         
-        <div className="w-full">
+        <div className="flex-1 w-full">
 
             <div className="flex items-center justify-between">
                 {/*user info*/}
@@ -86,18 +93,22 @@ const Post = (props) => {
             </div>
 
             {/*icons*/}
-            <div className="flex items-center justify-between text-gray-500 p-2">
-
-                <ChatIcon className='h-9 w-9 p-2 cursor-pointer hover__effect hover:text-sky-500 hover:bg-sky-100' onClick={()=> {
-                    if(!session){
-                        signIn();
-                    }else{
-                        setPostId(props.post.id)
-                        setModal(!modal)
+            <div className="flex items-center justify-between text-gray-500 p-1">
+                <div className="flex items-center space-x-1">
+                    <ChatIcon className='h-9 w-9 p-2 cursor-pointer hover__effect hover:text-sky-500 hover:bg-sky-100' onClick={()=> {
+                        if(!session){
+                            signIn();
+                        }else{
+                            setPostId(props.post.id)
+                            setModal(!modal)
+                        }
+                        
+                    }}
+                    />
+                    {
+                        comments.length === 1 ? <span className="text-sm select-none">1 Comment</span> : comments.length > 1 ? <span className="text-sm select-none">{comments.length} Comments</span> : null
                     }
-                    
-                }}
-                 />
+                 </div>
                 {
                     session?.user.uid === id && (
                     <TrashIcon className="h-9 w-9 p-2 cursor-pointer hover__effect hover:text-red-600 hover:bg-red-100" onClick={()=> deleteATweet()}/>)
@@ -111,7 +122,7 @@ const Post = (props) => {
                     <HeartIcon className="h-9 w-9 p-2 cursor-pointer hover__effect hover:text-red-600 hover:bg-red-100" onClick={likeATweet} />
                 }
                 {
-                    likes.length === 1 ? <span className={`${hasLiked && "text-red-600"} text-sm select-none`}>1 like</span> : likes.length > 1 ? <span className={`${hasLiked && "text-red-600"} text-sm select-none`}>{likes.length} likes</span> : <span className="text-sm select-none">0 likes</span>
+                    likes.length === 1 ? <span className={`${hasLiked && "text-red-600"} text-sm select-none`}>1 like</span> : likes.length > 1 ? <span className={`${hasLiked && "text-red-600"} text-sm select-none`}>{likes.length} likes</span> : null
                 }
                 </div>
                
